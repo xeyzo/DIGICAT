@@ -2,21 +2,11 @@ const express = require('express')
 const router = express.Router()
 const todo = require('../controllers/todo.controller.js')
 const m = require('../helpers/middlewares')
+const filename = '../data/task.json'
+let data = require(filename)
 
-router.get('/', async (req, res) => {
-    await todo.get()
-    .then(todo => res.json({
-        message:"success",
-        data:todo
-    }))
-    .catch(err => {
-        if (err.status) {
-            res.status(err.status).json({ message: err.message })
-        } else {
-            res.status(500).json({ message: err.message })
-        }
-    })
-})
+
+
 
 router.get('/:id', m.mustBeInteger, async (req, res) => {
     const id = req.params.id
@@ -73,6 +63,19 @@ router.delete('/:id', m.mustBeInteger, async (req, res) => {
         }
         res.status(500).json({ message: err.message })
     })
+})
+
+router.get('/', async(req, res, next) => {
+    const filters = req.query
+    const filterData = data.filter(data => {
+        let isValid = true
+        for (key in filters) {
+            console.log(key, data[key], filters[key]);
+            isValid = isValid && data[key] == filters[key];
+          }
+          return isValid;
+    });
+    res.send(filterData)
 })
 
 
