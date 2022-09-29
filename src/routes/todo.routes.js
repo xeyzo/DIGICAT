@@ -6,7 +6,17 @@ const filename = '../data/task.json'
 let data = require(filename)
 
 
-
+router.get('/findall', async (req, res) => {
+    await post.getPosts()
+    .then(posts => res.json(posts))
+    .catch(err => {
+        if (err.status) {
+            res.status(err.status).json({ message: err.message })
+        } else {
+            res.status(500).json({ message: err.message })
+        }
+    })
+})
 
 router.get('/:id', m.mustBeInteger, async (req, res) => {
     const id = req.params.id

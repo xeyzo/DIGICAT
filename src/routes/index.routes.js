@@ -1,4 +1,4 @@
 const express = require('express')
 const router = express.Router()
 module.exports = router
-router.use('/api/v1/todo', require('./todo.routes.js'))
+router.use('/api/v1/todo', require('./todo.routes.js'));
