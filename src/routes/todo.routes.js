@@ -28,7 +28,7 @@ router.get('/paginate', paginatedResults(data), (req, res) => {
 
 
 router.post('/', m.checkFieldsPost, async (req, res) => {
-    await post.create(req.body)
+    await todo.create(req.body)
     .then(todo => res.status(201).json({
         message: `Data #${todo.id} has been created`,
         data: todo
@@ -58,7 +58,7 @@ router.delete('/:id', m.mustBeInteger, async (req, res) => {
     
     await todo.deleted(id)
     .then(todo => res.json({
-        message: `The post #${id} has been deleted`
+        message: `Data #${id} has been deleted`
     }))
     .catch(err => {
         if (err.status) {
