@@ -22,23 +22,15 @@ router.get('/find/:id', m.mustBeInteger, async (req, res) => {
     })
 })
 
-router.get('/kipak', async (req, res) => {
-    await todo.get()
-    .then(todos => res.json(todos))
-    .catch(err => {
-        if (err.status) {
-            res.status(err.status).json({ message: err.message })
-        } else {
-            res.status(500).json({ message: err.message })
-        }
-    })
-})
+router.get('/paginate', paginatedResults(data), (req, res) => {
+    res.json(res.paginatedResults);
+  });
 
 
 router.post('/', m.checkFieldsPost, async (req, res) => {
     await post.create(req.body)
     .then(todo => res.status(201).json({
-        message: `Data #${post.id} has been created`,
+        message: `Data #${todo.id} has been created`,
         data: todo
     }))
     .catch(err => res.status(500).json({ message: err.message }))
@@ -90,5 +82,35 @@ router.get('/', async(req, res, next) => {
 })
 
 
-// Routes
+function paginatedResults(model) {
+    return (req, res, next) => {
+      const page = parseInt(req.query.page);
+      const limit = parseInt(req.query.limit);
+   
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+   
+      const results = {};
+      if (endIndex < data.length) {
+        results.next = {
+          page: page + 1,
+          limit: limit
+        };
+      }
+   
+      if (startIndex > 0) {
+        results.previous = {
+          page: page - 1,
+          limit: limit
+        };
+      }
+   
+      results.results = data.slice(startIndex, endIndex);
+   
+      res.paginatedResults = results;
+      next();
+    };
+  }
+
+
 module.exports = router

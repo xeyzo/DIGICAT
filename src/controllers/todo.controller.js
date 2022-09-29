@@ -56,7 +56,6 @@ function deleted(id) {
     })
 }
 
-
 module.exports = {
     create,
     get,
